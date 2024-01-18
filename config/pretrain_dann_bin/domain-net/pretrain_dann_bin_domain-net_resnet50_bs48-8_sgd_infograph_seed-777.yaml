@@ -1,0 +1,68 @@
+RANDOM_SEED: 777
+
+MODEL:
+  TYPE: "general_recognizer"
+  BACKBONE:
+    TYPE: "resnet50"
+    PRETRAINED: True
+    OUT_DIM: 2048
+  NECK:
+    TYPE: "fc"
+    INPUT_DIM: 2048
+    OUTPUT_DIM: 512
+    HIDDEN_DIMS: [ ]
+    ACTIVATION: 'relu'
+    DROPOUT: 0.
+  HEAD:
+    TYPE: "fc"
+    INPUT_DIM: 512
+    OUTPUT_DIM: 345
+    HIDDEN_DIMS: []
+    ACTIVATION: 'relu'
+    DROPOUT: 0.
+  DISCRIMINATOR:
+    TYPE: "fc"
+    INPUT_DIM: 512
+    OUTPUT_DIM: 2
+    HIDDEN_DIMS: [ 1024, 1024 ]
+    ACTIVATION: 'relu'
+    DROPOUT: 0.5
+
+DATASET:
+  NUM_CLASS: 345
+  CLASS_LIST_PATH: 'data/domain-net/classes.txt'
+  DATASET_MAPPING_PATH: 'data/domain-net/mapping.json'
+  ID2CLASS_MAPPING_PATH: 'data/domain-net/id2class_mapping.json'
+  ID2DOMAIN_MAPPING_PATH: 'data/domain-net/id2domain_mapping.json'
+  DATASET_NAME: 'domain-net'
+  DATAROOT: 'datasets/domain-net'
+  IMAGELIST_ROOT: 'data/domain-net'
+  SOURCE:
+    DOMAIN_NAMES: ["infograph",]
+  TARGET:
+    DOMAIN_NAMES: [ "clipart", "painting", "quickdraw", 'real', 'sketch']
+
+LOSS:
+  TYPE: "ce"
+
+TRAIN:
+  NUM_EPOCH: 64
+  BATCH_SIZE: 48
+  NUM_WORKER: 2
+  VAL_EPOCH: 8
+  ITER_REPORT: 300
+  TARGET:
+    UNLABELED:
+      BATCH_SIZE: 8
+      NUM_WORKER: 1
+
+VAL:
+  BATCH_SIZE: 256
+  NUM_WORKER: 2
+
+SOLVER:
+  OPTIMIZER: "sgd"
+  LR: 0.001
+  BACKBONE_LR_RESCALE: 0.1
+  WEIGHT_DECAY: 0.0005
+  SCHEDULER: 'InvLR'

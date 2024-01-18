@@ -1,0 +1,79 @@
+RANDOM_SEED: 777
+
+MODEL:
+  TYPE: "general_recognizer"
+  BACKBONE:
+    TYPE: "resnet50"
+    PRETRAINED: True
+    OUT_DIM: 2048
+  NECK:
+    TYPE: "fc"
+    INPUT_DIM: 2048
+    OUTPUT_DIM: 256
+    HIDDEN_DIMS: [ ]
+    ACTIVATION: 'relu'
+    DROPOUT: 0.
+  HEAD:
+    TYPE: "fc"
+    INPUT_DIM: 256
+    OUTPUT_DIM: 65
+    HIDDEN_DIMS: []
+    ACTIVATION: 'relu'
+    DROPOUT: 0.
+  DISCRIMINATOR:
+    TYPE: "fc"
+    INPUT_DIM: 256
+    OUTPUT_DIM: 2
+    HIDDEN_DIMS: [ 512, 512 ]
+    ACTIVATION: 'relu'
+    DROPOUT: 0.5
+  LOAD_FROM: "exps/benchmark_single-target_dann_bin_pretrain/office-home/benchmark_single-target_dann_bin_pretrain_office-home_resnet50_bs32_sgd_real-clipart_seed-777/ckpt/last.pth"
+
+DATASET:
+  NUM_CLASS: 65
+  CLASS_LIST_PATH: 'data/office-home/classes.txt'
+  DATASET_MAPPING_PATH: 'data/office-home/mapping.json'
+  ID2CLASS_MAPPING_PATH: 'data/office-home/id2class_mapping.json'
+  ID2DOMAIN_MAPPING_PATH: 'data/office-home/id2domain_mapping.json'
+  DATASET_NAME: 'office-home'
+  DATAROOT: 'datasets/office-home'
+  IMAGELIST_ROOT: 'data/office-home'
+  SOURCE:
+    DOMAIN_NAMES: ["real",]
+  TARGET:
+    DOMAIN_NAMES: [ "clipart",]
+
+LOSS:
+  TYPE: "ce"
+
+TRAIN:
+  NUM_EPOCH: 30
+  BATCH_SIZE: 32
+  NUM_WORKER: 2
+  VAL_EPOCH: 5
+  ITER_REPORT: 100
+  TARGET:
+    LABELED:
+      BATCH_SIZE: 8
+      NUM_WORKER: 0
+    UNLABELED:
+      BATCH_SIZE: 32
+      NUM_WORKER: 2
+
+VAL:
+  BATCH_SIZE: 128
+  NUM_WORKER: 2
+
+SOLVER:
+  OPTIMIZER: "sgd"
+  LR: 0.0003
+  BACKBONE_LR_RESCALE: 0.1
+  WEIGHT_DECAY: 0.0005
+  SCHEDULER: 'InvLR'
+
+SAMPLER:
+  TYPE: 'target-combined_aada_sampler'
+  STAGE_BUDGET: 100.0
+  NUM_STAGE: 5
+  VISUALIZE: False
+

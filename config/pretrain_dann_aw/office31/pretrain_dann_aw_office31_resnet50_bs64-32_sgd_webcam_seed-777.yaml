@@ -1,0 +1,68 @@
+RANDOM_SEED: 777
+
+MODEL:
+  TYPE: "general_recognizer"
+  BACKBONE:
+    TYPE: "resnet50"
+    PRETRAINED: True
+    OUT_DIM: 2048
+  NECK:
+    TYPE: "fc"
+    INPUT_DIM: 2048
+    OUTPUT_DIM: 256
+    HIDDEN_DIMS: []
+    ACTIVATION: 'relu'
+    DROPOUT: 0.
+  HEAD:
+    TYPE: "fc"
+    INPUT_DIM: 256
+    OUTPUT_DIM: 31
+    HIDDEN_DIMS: []
+    ACTIVATION: 'relu'
+    DROPOUT: 0.
+  DISCRIMINATOR:
+    TYPE: "fc"
+    INPUT_DIM: 256
+    OUTPUT_DIM: 3
+    HIDDEN_DIMS: [ 512, 512 ]
+    ACTIVATION: 'relu'
+    DROPOUT: 0.5
+
+DATASET:
+  NUM_CLASS: 31
+  CLASS_LIST_PATH: 'data/office31/classes.txt'
+  DATASET_MAPPING_PATH: 'data/office31/mapping.json'
+  ID2CLASS_MAPPING_PATH: 'data/office31/id2class_mapping.json'
+  ID2DOMAIN_MAPPING_PATH: 'data/office31/id2domain_mapping.json'
+  DATASET_NAME: 'office31'
+  DATAROOT: 'datasets/office31'
+  IMAGELIST_ROOT: 'data/office31'
+  SOURCE:
+    DOMAIN_NAMES: ["webcam",]
+  TARGET:
+    DOMAIN_NAMES: [ "amazon", "dslr"]
+
+LOSS:
+  TYPE: "ce"
+
+TRAIN:
+  NUM_EPOCH: 432
+  BATCH_SIZE: 64
+  NUM_WORKER: 2
+  VAL_EPOCH: 36
+  ITER_REPORT: 100
+  TARGET:
+    UNLABELED:
+      BATCH_SIZE: 32
+      NUM_WORKER: 1
+
+VAL:
+  BATCH_SIZE: 128
+  NUM_WORKER: 2
+
+SOLVER:
+  OPTIMIZER: "sgd"
+  LR: 0.001
+  BACKBONE_LR_RESCALE: 0.1
+  WEIGHT_DECAY: 0.0005
+  SCHEDULER: 'InvLR'

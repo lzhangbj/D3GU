@@ -16,7 +16,7 @@ It is designed to align source and multiple target domains via
 ## Installation
 <hr/>
 
-Install conda or miniconda then create new environment with the provided ``d3gpu.yml`` file:
+Install conda or miniconda then create new environment with the provided ``d3gu.yml`` file:
 ```angular2html
 conda env create -f d3gu.yml
 ```
